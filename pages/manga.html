@@ -1,0 +1,287 @@
+<div class="card shadow-sm mb-3">
+	<div class="card-body">
+		<div class="input-group mb-3">
+			<div class="input-group-prepend me-3">
+				<label class="input-group-text" for="inputGroupSelect01">篩選條件</label>
+			</div>
+			<div style="display: flex; align-self: center">
+				<div class="form-check form-check-inline">
+					<input v-model="searchType" class="form-check-input" type="radio" name="MatchType" id="MatchRadios1"
+						value="partial" checked>
+					<label class="form-check-label" for="MatchRadios1">部分符合</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input v-model="searchType" class="form-check-input" type="radio" name="MatchType" id="MatchRadios2"
+						value="exact">
+					<label class="form-check-label" for="MatchRadios2">完全符合</label>
+				</div>
+			</div>
+			<div style="display: flex; align-self: center; margin-left: auto;">
+				<div class="form-check-inline mb-2 d-none d-sm-block" style="cursor: pointer;" @click="listChange(1)">
+					<svg xmlns="http://www.w3.org/2000/svg" height="1em"
+						viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+						<path d="M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z" />
+					</svg>
+				</div>
+				<div class="form-check-inline mb-2 d-none d-sm-block" style="cursor: pointer;" @click="listChange(2)">
+					<svg xmlns="http://www.w3.org/2000/svg" height="1em"
+						viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+						<path d="M128 136c0-22.1-17.9-40-40-40L40 96C17.9 96 0 113.9 0 136l0 48c0 22.1 17.9 40 40 40H88c22.1 0 40-17.9 40-40l0-48zm0 192c0-22.1-17.9-40-40-40H40c-22.1 0-40 17.9-40 40l0 48c0 22.1 17.9 40 40 40H88c22.1 0 40-17.9 40-40V328zm32-192v48c0 22.1 17.9 40 40 40h48c22.1 0 40-17.9 40-40V136c0-22.1-17.9-40-40-40l-48 0c-22.1 0-40 17.9-40 40zM288 328c0-22.1-17.9-40-40-40H200c-22.1 0-40 17.9-40 40l0 48c0 22.1 17.9 40 40 40h48c22.1 0 40-17.9 40-40V328zm32-192v48c0 22.1 17.9 40 40 40h48c22.1 0 40-17.9 40-40V136c0-22.1-17.9-40-40-40l-48 0c-22.1 0-40 17.9-40 40zM448 328c0-22.1-17.9-40-40-40H360c-22.1 0-40 17.9-40 40v48c0 22.1 17.9 40 40 40h48c22.1 0 40-17.9 40-40V328z" />
+					</svg>
+				</div>
+				<span>
+					共 <span style="color: deepskyblue;">{{ visibleCount }}</span> 筆百合
+				</span>
+			</div>
+		</div>
+
+
+		<div class="d-block"></div>
+
+		<div style="box-shadow: inset 1px 1px 3px 0px #aaa; border-radius: 5px; padding: 0.5em; margin: 0 -0.5em;">
+
+			<div class="input-group mb-3" style="z-index: 0;">
+				<span class="tagEdit" :style="{top:'10px', right:'10px', 'font-size':'15px'}" @click="showModal(1)"
+					v-show="isLoadCustomizationData">
+					<svg xmlns="http://www.w3.org/2000/svg" height="1em"
+						viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+						<path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" />
+					</svg>
+				</span>
+				<div class="input-group-prepend me-3">
+					<label class="input-group-text" for="inputGroupSelect01">標籤操作</label>
+				</div>
+				<button type="button" class="btn rounded"
+					:class="{ 'btn-outline-primary': searchMode != 1, 'btn-primary': searchMode == 1 }"
+					@click="searchMode = 1">
+					查詢模式
+				</button>
+				<button type="button" class="btn rounded ms-3"
+					:class="{ 'btn-outline-danger': searchMode != 2, 'btn-danger': searchMode == 2 }"
+					@click="searchMode = 2">
+					排除模式
+				</button>
+				<span v-show="searchMode == 2" class="ms-2 text-danger fw-bold"
+					style="align-self: center;">排除模式:點擊標籤可排除包含此標籤的資料</span>
+			</div>
+
+			<div class="form-check-inline mb-2">
+				<button class="btn btn-outline-success btn-sm" @click="selectAllTags">全選</button>
+			</div>
+			<div class="form-check-inline mb-2">
+				<button class="btn btn-outline-dark btn-sm" @click="clearAllTags">全部清除</button>
+			</div>
+
+
+
+			<template v-for="type in tagType" :key="'tagType' + type">
+				<div class="d-block"></div>
+				<template v-for="key of filteredTags(type)" :key="'filteredTags' + key">
+					<div class="form-check form-check-inline">
+						<input v-model="tagList" :value="key.id" class="form-check-input" type="checkbox"
+							:id="'tagCheckbox' + key.name" @change="updateHiddenTagList(key.id)">
+						<label class="form-check-label" :class="{ 'strikethrough': isTagChecked(key.id) }"
+							:for="'tagCheckbox' + key.name">{{ key.name }}</label>
+					</div>
+				</template>
+			</template>
+
+			<!-- 自定義標籤 -->
+			<div v-for="(t, i) in dynamicTagsOptions" :key="'dynamicTagsOptions' + t + i">
+				<div class="d-block"></div>
+				<div v-for="(tag, index) in filteredDynamicTag(t.value)" :key="'customizationTags' + index"
+					:style="{ color: tag.color }" class="dynamicTags form-check form-check-inline">
+					<input v-model="dynamicTagList" :value="tag.id" class="form-check-input" type="checkbox"
+						:id="'tagCheckbox' + i * 100 + index" @change="updateHiddenTagList(tag.id)">
+					<label class="form-check-label" :class="{ 'strikethrough': isTagChecked(tag.id) }"
+						:for="'tagCheckbox' + i * 100 + index">{{ tag.label }}</label>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="row">
+	<div :class="listGrid" v-for="([key, v], i) in Object.entries(mangaData)" :key="key"
+		v-show="hasIntersection(v.tags, tagList, key)">
+		<div class="card shadow-sm mb-3">
+
+			<span class="tagEdit" @click="showModal(2, key)" :style="listGridTagPosition"
+				v-show="isLoadCustomizationData && !isBookmark(key)">
+				<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512">
+					<path d="M0 48C0 21.5 21.5 0 48 0l0 48V441.4l130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4V48H48V0H336c26.5 0 48 21.5 48 48V488c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488V48z" />
+				</svg>
+			</span>
+			<span class="tagEdit" @click="showModal(2, key)" :style="listGridTagPosition"
+				v-show="isLoadCustomizationData && isBookmark(key)">
+				<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512">
+					<path d="M0 48V487.7C0 501.1 10.9 512 24.3 512c5 0 9.9-1.5 14-4.4L192 400 345.7 507.6c4.1 2.9 9 4.4 14 4.4c13.4 0 24.3-10.9 24.3-24.3V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48z" />
+				</svg>
+			</span>
+
+			<div class="card-body" :style="dynamicTagsBackgroundStyle(key)" style="borderRadius: 5px;">
+				<div v-for="(dTag, dIndex) in keyTotalCountInDynamicTags(key)" :key="'cardDesign' + key">
+					<div :style="{
+						width: 'calc(100% - ' + (4 * dIndex) + 'px)',
+					    height: 'calc(100% - ' + (4 * dIndex) + 'px)',
+					    position: 'absolute',
+						borderRadius: Math.max(0, 5 - 3 * dIndex) + 'px',
+					    top: 0 + 2 * dIndex + 'px',
+					    left: 0 + 2 * dIndex + 'px',
+					    border: dTag.color + ' 2px solid',
+						pointerEvents: 'none' }">
+					</div>
+				</div>
+				<div :style="{
+						width: '100%',
+					    height: '100%',
+					    position: 'absolute',
+						borderRadius: '5px',
+					    top: '0px',
+					    left: '0px',
+					    backgroundColor: 'blue',
+						'z-index': '-1',
+						pointerEvents: 'none' }">
+				</div>
+
+				<div class="row align-items-center" style="z-index: 2;">
+					<div :class="listGridPicture" style="text-align: -webkit-center;">
+						<img :src="urlData[key]" alt="" class="responsive-image" />
+					</div>
+					<div class="col">
+						<div class="row" style="position: relative;">
+							<span class="collapseData" @click="dataExpand(key)" v-show="listGridMode == 2"
+								v-html="markChange(key)"></span>
+							<p :class="listGridMainData" style="display: inline;" v-show="listGridMode == 1">名稱:</p>
+							<p :class="listGridMainData3" :style="styleChange(key)">{{ v.name }}</p>
+							<p :class="listGridMainData" style="display: inline;" v-show="showDetail(key)">原名:</p>
+							<p :class="listGridMainData2" v-show="showDetail(key)">{{ v.originalName }}</p>
+							<p :class="listGridMainData" style="display: inline;" v-show="showDetail(key)">作者:</p>
+							<p :class="listGridMainData2" v-show="showDetail(key)">{{ v.author }}</p>
+							<p :class="listGridMainData" style="display: inline;" v-show="showDetail(key)">原作者:</p>
+							<p :class="listGridMainData2" v-show="showDetail(key)">{{ v.originalAuthor }}</p>
+							<p :class="listGridMainData" style="display: inline;" v-show="showDetail(key)">標籤:</p>
+							<p :class="listGridMainData2" style="display: inline;" v-show="showDetail(key)">{{ formatTags(v.tags) }}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 彈出視窗 -->
+<div v-if="showPopup" class="modal">
+	<div class="modal-content">
+		<span class="close" @click="hideModal">&times;</span>
+		<!-- 標籤管理 -->
+		<div v-if="popupCondition == 1">
+			<h2>設定</h2>
+			<nav>
+				<div class="nav nav-tabs" id="nav-tab" role="tablist">
+					<button class="nav-link active" id="nav-add-tab" data-bs-toggle="tab" data-bs-target="#nav-add"
+						type="button" role="tab" aria-controls="nav-add" aria-selected="true">
+						<svg xmlns="http://www.w3.org/2000/svg" height="1em"
+							viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+							<path
+								d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+						</svg>
+						標籤管理
+					</button>
+					<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+						type="button" role="tab" aria-controls="nav-profile" aria-selected="false">2</button>
+					<button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
+						type="button" role="tab" aria-controls="nav-contact" aria-selected="false">3</button>
+				</div>
+			</nav>
+			<div class="tab-content" id="nav-tabContent">
+				<div class="tab-pane fade show active" id="nav-add" role="tabpanel" aria-labelledby="nav-add-tab"
+					tabindex="0">
+					<div class="mt-3">
+						<lable class="badge rounded-pill text-bg-primary fs-6 fw-bold">新增標籤</lable>
+					</div>
+					<div class="row mt-3">
+						<div class="col-auto d-flex pe-0 pt-2 pb-2">
+							<input type="text" class="me-2" v-model="newTagLabel" @keyup.enter="addTag"
+								placeholder="新增自定義標籤">
+							<div v-for="option in dynamicTagsOptions" :key="option.value"
+								style="display: flex; align-items: center;">
+								<input class="me-2" type="radio" :id="option.value" :value="option.value"
+									name="dynamicTagsOptions" v-model="selectedDynamicTagType" />
+								<label class="me-2" :for="option.value">{{ option.label }}</label>
+							</div>
+						</div>
+						<div class="col-auto" style="display: flex; align-items: center;">
+							<input type="color" class="me-2" @input="updateNewTagColor($event.target.value)">
+							<button type="button" class="btn btn-info btn-sm me-2" @click="addTag"
+								:disabled="!selectedDynamicTagType || !newTagLabel">新增</button>
+						</div>
+					</div>
+
+					<div class="mt-3">
+						<lable class="badge rounded-pill text-bg-success fs-6 fw-bold">編輯標籤</lable>
+					</div>
+					<div class="form-field-optionList">
+						<div v-for="(t, i) in dynamicTagsTemp" :key="'dynamicTags' + t + i"
+							style="padding-left: 15px; padding-right: 15px;">
+							<div class="card border-success row mt-3">
+								<div class="row">
+									<div class="col-auto d-flex pe-0 pt-2 pb-2">
+										<input type="text" class="me-2" style="width: 100px; height: 30px;"
+											v-model="t.label">
+										<div v-for="option in dynamicTagsOptions" :key="option.value + i"
+											style="display: flex; align-items: center;">
+											<input class="me-2" type="radio" :id="option.value + i"
+												:value="option.value" :name="dynamicTagsOptions + i" v-model="t.type" />
+											<label class="me-2" :for="option.value + i">{{ option.label }}</label>
+										</div>
+									</div>
+									<div class="col-auto pt-2 pb-2" style="display: flex; align-items: center;">
+										<input type="color" class="me-2" :value="t.color"
+											@input="updateTagColor(i, $event.target.value)">
+									</div>
+									<div class="col pt-2 pb-2"
+										style="display: flex; align-items: center; justify-content: flex-end;">
+										<button type="button" class="btn btn-danger btn-sm me-2"
+											@click="removeTag(i)">刪除</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="mt-3">
+						<button type="button" class="btn btn-info btn-sm me-2" @click="updateTag()"
+							:disabled="isTagsTempEqualToTags">保存修改</button>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+			</div>
+			<div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">
+			</div>
+		</div>
+
+		<!-- 標籤追加 -->
+		<div v-if="popupCondition == 2">
+			<span class="close" @click="hideModal">&times;</span>
+			<h2>加入標籤</h2>
+			<div v-for="(t, i) in dynamicTagsOptions" :key="'dynamicTagsOptions' + t + i">
+				<div class="d-block"></div>
+				<div v-for="(tag, index) in filteredDynamicTagTemp(t.value)" :key="'addDynamicTags' + tag + index"
+					:style="{ color: tag.color }" class="dynamicTags form-check form-check-inline">
+					<div class="d-block"></div>
+					<input v-model="tag.tagList" :value="addDynamicTagIdTemp" class="form-check-input" type="checkbox"
+						:id="'addDynamicTagCheckbox' + tag.id" @change="updateHiddenTagList(tag.id)">
+					<label class="form-check-label" :for="'addDynamicTagCheckbox' + tag.id">{{ tag.label }}</label>
+				</div>
+			</div>
+			<div class="mt-3">
+				<button type="button" class="btn btn-info btn-sm me-2" @click="updateTag()"
+					:disabled="isTagsTempEqualToTags">保存修改</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,137 @@
+<div class="card shadow-sm mb-3">
+	<div class="card-header">
+		<p class="fw-bold fs-5 title-text mb-0">AddMangaData</p>
+	</div>
+	<div class="row ms-1">
+		<div class="card-body col-6">
+			<div class="input-group mb-3">
+				<form id="MangaForm">
+					<div class="form-group">
+						<input type="text" v-model="manga_name" placeholder="Name">
+					</div>
+					<div class="form-group">
+						<input type="text" v-model="manga_originalName" placeholder="OriginalName">
+					</div>
+					<div class="form-group">
+						<input type="text" v-model="manga_author" placeholder="Author">
+					</div>
+					<div class="form-group">
+						<input type="text" v-model="manga_originalAuthor" placeholder="OriginalAuthor">
+					</div>
+					<div class="input-group-prepend me-3">
+						<label class="border border-3">Tags</label>
+					</div>
+					<template v-for="data of this.tagData">
+						<div class="form-check form-check-inline">
+							<input v-model="manga_tags" :value="data.id" class="form-check-input" type="checkbox"
+								:id="'tagCheckbox' + data.name">
+							<label class="form-check-label" :for="'tagCheckbox' + data.name">{{ data.name }}</label>
+						</div>
+					</template>
+				</form>
+			</div>
+			<input type="file" id="fileInput" style="display: none;">
+			<button class="btn btn-outline-success btn-sm" type="submit" @click="submitMangaForm">選擇圖片並上傳</button>
+		</div>
+		<div class="card-body col-6 text-center text-center-self">
+			<div class="spinner-border text-primary" role="status" v-show="manga_show">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<transition name="fade">
+				<span class="fs-2" :style="getStyleMangaMessage" v-if="manga_message != ''">{{ manga_message }}</span>
+			</transition>
+		</div>
+	</div>
+</div>
+
+
+<div v-for="([key, v], i) in Object.entries(savedMangaData)">
+	<div class="card shadow-sm mb-3">
+		<div class="card-body">
+			<div class="row align-items-center ms-1">
+				<div class="col-3 col-sm-2 col-lg-1">
+					<img :src="this.savedMangaImage[key]" alt="" style="max-height: 100px; max-width: 50px;" />
+				</div>
+				<div class="col-7 col-sm-4 col-lg-6">
+					<div class="row">
+						<p class="mb-0 px-0 col-3 col-sm-3 col-lg-2 " style="display: inline;">Id:</p>
+						<p class="mb-0 col-9 col-sm-9 col-lg-10">{{ key }}</p>
+						<p class="mb-0 px-0 col-3 col-sm-3 col-lg-2 " style="display: inline;">名稱:</p>
+						<p class="mb-0 col-9 col-sm-9 col-lg-10">{{ v.name }}</p>
+						<p class="mb-0 px-0 col-3 col-sm-3 col-lg-2" style="display: inline;">原名:</p>
+						<p class="mb-0 col-9  col-sm-9 col-lg-10">{{ v.originalName }}</p>
+						<p class="mb-0 px-0 col-3 col-sm-3 col-lg-2" style="display: inline;">作者:</p>
+						<p class="mb-0 col-9  col-sm-9 col-lg-10">{{ v.author }}</p>
+						<p class="mb-0 px-0 col-3 col-sm-3 col-lg-2" style="display: inline;">原作者:</p>
+						<p class="mb-0 col-9  col-sm-9 col-lg-10">{{ v.originalAuthor }}</p>
+						<p class="mb-0 px-0 col-3 d-sm-none" style="display: inline;">標籤:</p>
+						<p class="mb-0 col-9 d-sm-none" style="display: inline;">{{ formatTags(v.tags) }}</p>
+					</div>
+				</div>
+				<div class="col-sm-4 col-lg-4 d-none d-sm-block">
+					<div class="row">
+						<p class="mb-0 px-0 col-3 col-sm-3 col-lg-2 d-none d-sm-block" style="display: inline;">標籤:</p>
+						<p class="mb-0 col-9 col-sm-9 col-lg-10 d-none d-sm-block" style="display: inline;">{{
+							formatTags(v.tags) }}</p>
+					</div>
+				</div>
+				<div class="col-2 col-sm-2 col-lg-1 text-center text-center-self">
+					<button class="btn btn-outline-danger btn-sm" type="submit"
+						@click="deleteMangaData(key)">刪除</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="card shadow-sm mb-3">
+	<div class="card-header">
+		<p class="fw-bold fs-5 title-text mb-0">GenerateMangaDataForJson</p>
+	</div>
+	<div class="row ms-1">
+		<div class="card-body col-3 text-center-self">
+			<div>
+				<button class="btn btn-outline-success btn-sm" type="submit"
+					@click="generateMangaDataForJson">更新Json檔</button>
+			</div>
+		</div>
+		<div class="card-body col-6 text-center text-center-self">
+			<div class="spinner-border text-primary" role="status" v-show="manga_json_show">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<transition name="fade">
+				<span class="fs-4" :style="getStyleMangaJsonMessage" v-if="manga_json_message != ''">{{
+					manga_json_message }}</span>
+			</transition>
+		</div>
+		<div class="card-body col-3 text-center text-center-self">
+		</div>
+	</div>
+</div>
+
+<div class="card shadow-sm mb-3">
+	<div class="card-header">
+		<p class="fw-bold fs-5 title-text mb-0">DeleteMangaData</p>
+	</div>
+	<div class="row ms-1">
+		<div class="card-body col-6">
+			<div class="input-group mb-3">
+				<form id="MangaForm">
+					<div class="form-group">
+						<input type="text" v-model="manga_delete_name" placeholder="Name">
+					</div>
+				</form>
+			</div>
+			<button class="btn btn-outline-danger btn-sm" type="submit" @click="deleteMangaDataByName">刪除</button>
+		</div>
+		<div class="card-body col-6 text-center text-center-self">
+			<div class="spinner-border text-primary" role="status" v-show="manga_delete_show">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<transition name="fade">
+				<span class="fs-2" :style="getStyleMangaDeleteMessage" v-if="manga_delete_message != ''">{{
+					manga_delete_message }}</span>
+			</transition>
+		</div>
+	</div>
+</div>
